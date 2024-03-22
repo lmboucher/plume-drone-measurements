@@ -90,6 +90,11 @@ I use two options for my ground station receiving data from the remote station :
 
 ### Computer ground station
 
+I did not have any configuration to do. I worked in Python with Spyder and I used GVim to visualize my text file. I did three programs :
+- One is designed to send Terminal command lines to the Rasperry
+- One is designed to receive data from the remote station
+- One is designed to receive data from the remote station and to plot the different concentrations measured by the multisensor board with the time as the x-axis.
+
 ### Android ground station
 
 SCHÉMAAAAAAAAA
