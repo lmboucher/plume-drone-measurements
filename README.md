@@ -1,4 +1,4 @@
-## Remote-Ground-station-setting-live-drone-measurements
+# Remote-Ground-station-setting-live-drone-measurements
 This repository is aimed to contain information for :
 
 - The setting of a Raspberry Pi3b
@@ -8,7 +8,9 @@ This repository is aimed to contain information for :
 - The setting of a computer for receiving, sending, and plotting live the information sent by the Raspberry via a RFD 868x module
 - The creation of an Android application for receiving, sending, and plotting live information sent by the Raspberry via a RFD 868x module
 
-# Raspberry setting for Neo 6m GPS module
+## Raspberry setting for Neo 6m GPS module
+
+### Installations
 
 1. Install Python on your Raspberry, the version must be at least 3.5. This tutorial is nice : [Python 3.9 installation on a Raspberry Pi](https://itheo.tech/install-python-39-on-raspberry-pi).
 
@@ -19,6 +21,8 @@ This repository is aimed to contain information for :
 4.  Install pyserial (NOT serial otherwise you will have issues) `pip install pyserial`
 
 5.  Install librairies to handle communication with the GPS module `sudo apt install gpsd gpsd-clients python3-gps minicom`
+
+### Configuration files modifications
 
 Now we need to modify some configuration files so files read by the Raspberry system when it boots.
 
@@ -37,6 +41,8 @@ force_turbo=1
 init_uart_baud=9600
 ```
 3. Reboot the system to take into account the changes : `sudo reboot now`
+
+### Communicate !
 
 Now everything is ready to communicate with the GPS module ! 
 
@@ -62,7 +68,11 @@ cgps -s
 
 I advise you after this first try to write a little program (mine is in Python) to read incoming data easily without having to do again all those last steps.
 
-# Android application for communication with the Raspberry
+### Create a program to communicate with the GPS module
+
+PUT MY PROGRAM HERE
+
+## Android application for communication with the Raspberry
 
 SCHÉMAAAAAAAAA
 
