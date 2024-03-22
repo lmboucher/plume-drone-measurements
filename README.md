@@ -8,9 +8,15 @@ This repository is aimed to contain information for :
 - The setting of a computer for receiving, sending, and plotting live the information sent by the Raspberry via a RFD 868x module
 - The creation of an Android application for receiving, sending, and plotting live information sent by the Raspberry via a RFD 868x module
 
-## Raspberry setting for Neo 6m GPS module
+## Raspberry settings
 
-### Installations
+To set up your Raspberry, you  may use a HDMI-HDMI or HDMI-VGA cable which you plug in on one side to the Raspberry and on the other side to a monitor. Then, you plug in a keyboard via the USB port to be able to write command lines and programs. The mouse is optional since you can go into Terminal mode without it.
+
+### Communication with the Neo 6m GPS module
+
+The goal of this part is to be able to receive, print, and save the data acquired by the GPS module in the Raspberry.
+
+#### Installations
 
 1. Install Python on your Raspberry, the version must be at least 3.5. This tutorial is nice : [Python 3.9 installation on a Raspberry Pi](https://itheo.tech/install-python-39-on-raspberry-pi).
 
@@ -22,7 +28,7 @@ This repository is aimed to contain information for :
 
 5.  Install librairies to handle communication with the GPS module `sudo apt install gpsd gpsd-clients python3-gps minicom`
 
-### Configuration files modifications
+#### Configuration files modifications
 
 Now we need to modify some configuration files so files read by the Raspberry system when it boots.
 
@@ -42,7 +48,7 @@ init_uart_baud=9600
 ```
 3. Reboot the system to take into account the changes : `sudo reboot now`
 
-### Communicate !
+#### Communicate !
 
 Now everything is ready to communicate with the GPS module ! 
 
@@ -68,11 +74,23 @@ cgps -s
 
 I advise you after this first try to write a little program (mine is in Python) to read incoming data easily without having to do again all those last steps.
 
-### Create a program to communicate with the GPS module
+#### Create a program to communicate with the GPS module
 
 PUT MY PROGRAM HERE
 
-## Android application for communication with the Raspberry
+### Raspberry setting for the data transmission to another device
+
+The communication module used here is a RFD 868x-EU device. Thanks to a USB-FTDI cable, it is plugged in the Raspberry via USB port.
+
+The first and most important step is to determine in which serial port the information pass : look at your ports without plug in the communication module `ls /dev/`, now plug in the communication module and look at `ls /dev/` again. On Linux you can even safely add `| grep tty` at the end of those two commands. This time a port should have appeared. In my case it is sometimes `ttyACM0` and sometimes `ttyACM1` (I have also the GPS module connected).
+
+## Ground station settings
+
+I use two options for my ground station receiving data from the remote station : the Raspberry and its modules. The first is using my computer and the second is to use an Android tablet (much more practical for field work).
+
+### Computer ground station
+
+### Android ground station
 
 SCHÉMAAAAAAAAA
 
