@@ -95,6 +95,8 @@ I used Python 3.11.2 with Spyder (5th version). I wrote three programs :
 2. Send Terminal command lines to the Rasperry
 3. Receive, store, parse, and plot live data sent by the Raspberry
 
+You will find more information [here]()
+
 #### Common prerequisits to all the programs
 
 For the communication with the remote station (the receiving and sending of data) you will need to install the `pyserial` library. So first you need to install pip.
@@ -146,7 +148,7 @@ This program is divided in four parts as the first one.
 
 As usual you need the pip pyserial library. In my case, since I want times on the x-axis, I need the datetime module (no installation needed it comes with you Python installation) and the matplotlib.dates module (installation with matplotlib `sudo apt install python3-matplotlib`). Numpy is used since I work with arrays for the plotting (install it with `sudo apt install python3-numpy`). Then other librairies from matplotlib are needed to do nice plots, but no more installations to do.
 
-The other parts are very similar to the first program, more complex but with more comments   
+The other parts are very similar to the first program, more complex but with more comments
 
 ### Android ground station
 
