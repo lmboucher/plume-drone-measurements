@@ -95,7 +95,7 @@ I used Python 3.11.2 with Spyder (5th version). I wrote three programs :
 2. Send Terminal command lines to the Rasperry
 3. Receive, store, parse, and plot live data sent by the Raspberry
 
-You will find more information [here]()
+You will find more information [here](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/blob/main/computer_ground_station/README.md)
 
 ### Android ground station
 
