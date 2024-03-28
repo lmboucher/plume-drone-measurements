@@ -10,7 +10,7 @@ This repository is aimed to contain information for :
 
 ## Raspberry settings
 
-To set up your Raspberry, you  may use a HDMI-HDMI or HDMI-VGA cable which you plug in on one side to the Raspberry and on the other side to a monitor. Then, you plug in a keyboard via the USB port to be able to write command lines and programs. The mouse is optional since you can go into Terminal mode without it.
+To set up your Raspberry, you  may use a HDMI-HDMI or HDMI-VGA cable which you plug in on one side to the Raspberry and on the other side to a monitor. Then, you plug in a keyboard via the USB port to be able to write command lines and programs. The mouse is optional since you can go into Terminal mode without it. You also need an alimentation ; you can buy the one from Raspberry or use an external battery or use a computer or a phone charger or ... 
 
 ### Communication with the Neo 6m GPS module
 
@@ -72,7 +72,7 @@ cgps -s
 ```
 4. Put your Raspberry + GPS module under a clear sky (not in a yard) and wait at least 20 minutes to get a signal.
 
-I advise you after this first try to write a little program (mine is in Python) to read incoming data easily without having to do again all those last steps.
+I advise you after this first try to write a little program (mine is in Python) to read incoming data easily without having to do again all the steps from that part.
 
 #### Create a program to communicate with the GPS module
 
@@ -82,7 +82,7 @@ PUT MY PROGRAM HERE
 
 The communication module used here is a RFD 868x-EU device. Thanks to a USB-FTDI cable, it is plugged in the Raspberry via USB port.
 
-The first and most important step is to determine in which serial port the information pass : look at your ports without plug in the communication module `ls /dev/`, now plug in the communication module and look at `ls /dev/` again. On Linux you can even safely add `| grep tty` at the end of those two commands. This time a port should have appeared. In my case it is sometimes `ttyACM0` and sometimes `ttyACM1` (I have also the GPS module connected).
+The first and most important step is to determine in which serial port the information pass : look at your ports without plugging in the communication module by using `ls /dev/` in your Terminal. Then plug in the communication module and look at `ls /dev/` again. On Linux you can even safely add `| grep tty` at the end of the command. This time a port should have appeared. In my case it is sometimes `ttyACM0` and sometimes `ttyACM1` (but I have also the GPS module and the multisensor board connected).
 
 ## Ground station settings
 
@@ -91,11 +91,11 @@ I use two options for my ground station receiving data from the remote station :
 ### Computer ground station
 
 I used Python 3.11.2 with Spyder (5th version). I wrote three programs :
-- One is designed to send Terminal command lines to the Rasperry
-- One is designed to receive data from the remote station
-- One is designed to receive data from the remote station and to plot the different concentrations measured by the multisensor board with the time as the x-axis.
+1. Receive and store data sent by the Raspberry
+2. Send Terminal command lines to the Rasperry
+3. Receive, store, parse, and plot live data sent by the Raspberry
 
-#### Installations
+#### Common prerequisits to all the programs
 
 For the communication with the remote station (the receiving and sending of data) you will need to install the `pyserial` library. So first you need to install pip.
 ```
@@ -107,21 +107,58 @@ pip list
 pip uninstall serial
 pip install pyserial
 ```
-Some more librairies are needed if you want to do the plotting of the received data, especially if you want to do the live plot with datetime objects on the x-axis.
+Also, you need to know which port is used by your computer. It is the same method than explained before with the Raspberry.
 
-#### Programming
+#### First program
 
-The first step is to find which port is used by your computer, like the Raspberry before. Connect your communication device to your computer and see `ls /dev/` in your Terminal. Then do it again without plugging in your communication module. There should be a port appearing on the first try and not on the second, that's this one you will need to use.
+This program contains four parts
+
+1. The import of the pip pyserial library
+2. The parameters' setting
+- The port name
+- The document where to store the data with its path
+3. The functions
+- The first function is to open the port
+- The second one is to acquire the data sent by the remote station
+4. The main entry
+- You need to make sure that you open the port before starting playing with the data.
+- You need in the end to close the port otherwise it can be problematic if you relaunch the program.
+
+#### Second program
+
+This program contains three parts
+
+1. The import of the pip pyserial library
+2. The port name setting
+3. The main entry of the script where a command line is asked to the user and then sent to the remote station. As before, make sure you open the port with the correct baudrate and make sure you close it in the end.
+
+#### Third program
+
+This one is the biggest. In my case, since the Raspberry is connected to both the multisensor board and the GPS module, the data incoming are lines like 
+```
+"GPS_time ,SensorInfo1 ,SensorInfo2 ,... , SensorInfoN ,GPS_lon ,GPS_lat, GPS_alt"
+```
+The sensor information are diverse, we have in the beginning temperature, humidity, pressure, and in the end gas concentrations. What this program does is to receive and store the data as before. However, it also permits to do a live plot of the different gas concentrations with the GPS time on the x-axis.
+
+This program is divided in four parts as the first one.
+
+1. The imports' part
+
+As usual you need the pip pyserial library. In my case, since I want times on the x-axis, I need the datetime module (no installation needed it comes with you Python installation) and the matplotlib.dates module (installation with matplotlib `sudo apt install python3-matplotlib`). Numpy is used since I work with arrays for the plotting (install it with `sudo apt install python3-numpy`). Then other librairies from matplotlib are needed to do nice plots, but no more installations to do.
+
+The other parts are very similar to the first program, more complex but with more comments   
 
 ### Android ground station
 
+The developped application is doing the equivalent of my second and third programs on the computer ground station.
+
 SCHÉMAAAAAAAAA
 
-I use Android Studio on my computer (Linux Debian amd64) PRECISE THE VERSIONNNN OF ANDROID STUDIO
+I use Android Studio on my computer (Linux Debian amd64). I dowloaded the version 2O23.2.1.24 for Linux 64 bits.
 
 The first step is to install Android Studio. At first launch, I chose "do not import settings" and "standard setup", I was new to this app. Try to follow the "Hello World" course from the [Essentials](https://developer.android.com/codelabs/basic-android-kotlin-compose-first-app?hl=fr) . If when you launch a build you have `Error running "GreetingPreview" : /dev/kvm is not found` go to your BIOS (restart your computer and press without stopping the F2 key) and enable `Intel Virtualization Technology` (found in the `Configuration` menu on my computer).
 
-Then, Android Studio is ready to create the ground station app. I use the [usb-serial-for-android library](https://github.com/mik3y/usb-serial-for-android). Steps 2. to ... are taken from Kai Morich's README.md file.
+Then, Android Studio is ready to create the ground station app. I use the [usb-serial-for-android library](https://github.com/mik3y/usb-serial-for-android).
 
 1. Create a new project on Android Studio, choose the option "Empty Views Activity"
 2. Go to your `settings.gradle.kts` file and add the line `maven(url = "https://jitpack.io")` like :
@@ -134,11 +171,12 @@ dependencyResolutionManagement {
     }
 }
 ```
-3. Go to your `build.gradle.kts (Module:app)` file and add in the dependencies the usb-serial-for-android library :
+3. Go to your `build.gradle.kts (Module:app)` file and add in the dependencies the usb-serial-for-android and graphView libraries :
 ```
 dependencies {
     ...
     implementation("com.github.mik3y:usb-serial-for-android:3.7.0")
+    implementation("com.jjoe64:graphview:4.2.2")
     ...
 }
 ```
@@ -163,4 +201,9 @@ dependencies {
     </application>
 </manifest>
 ```
-6. Now implement the code in `app/kotlin+java/com.example.YOUR_APP_NAME/MainActivity`
+6. Add in your `gradle.properties` file
+```
+android.useAndroidX=true #May already be here
+android.enableJetifier=true
+``` 
+7. Now implement the code in `app/kotlin+java/com.example.YOUR_APP_NAME/MainActivity` and set you res xml files as you wish.
