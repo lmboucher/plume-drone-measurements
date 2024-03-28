@@ -1,6 +1,6 @@
-This directory contains the information specific to the setting of the computer ground station.
+**This directory contains the information specific to the setting of the computer ground station.**
 
-#### Common prerequisits to all the programs
+# Common prerequisits to all the programs
 
 First you need Python.
 Then you need to install the `pyserial` library. Install `pip` and then `pyserial`.
@@ -16,7 +16,7 @@ pip install pyserial
 ```
 Also, you need to know which port is used by your computer : in your Terminal look at `ls /dev/`. Then plug in your communication module and do again `ls /dev/`. An additional port should be there on the second time use this one. On Linux you can safely do `ls /dev/ | grep tty` rather than just `ls /dev/`, it will be faster to see the new port.
 
-#### First program
+# [First program]()
 
 This program contains four parts
 
@@ -31,7 +31,7 @@ This program contains four parts
 - You need to make sure that you open the port before starting playing with the data.
 - You need in the end to close the port otherwise it can be problematic if you relaunch the program.
 
-#### Second program
+# Second program
 
 This program contains three parts
 
@@ -39,7 +39,7 @@ This program contains three parts
 2. The port name setting
 3. The main entry of the script where a command line is asked to the user and then sent to the remote station. As before, make sure you open the port with the correct baudrate and make sure you close it in the end.
 
-#### Third program
+# Third program
 
 This one is the biggest. In my case, since the Raspberry is connected to both the multisensor board and the GPS module, the data incoming are lines like 
 ```
