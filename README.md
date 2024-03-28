@@ -90,10 +90,28 @@ I use two options for my ground station receiving data from the remote station :
 
 ### Computer ground station
 
-I did not have any configuration to do. I worked in Python with Spyder and I used GVim to visualize my text file. I did three programs :
+I used Python 3.11.2 with Spyder (5th version). I wrote three programs :
 - One is designed to send Terminal command lines to the Rasperry
 - One is designed to receive data from the remote station
 - One is designed to receive data from the remote station and to plot the different concentrations measured by the multisensor board with the time as the x-axis.
+
+#### Installations
+
+For the communication with the remote station (the receiving and sending of data) you will need to install the `pyserial` library. So first you need to install pip.
+```
+sudo apt install python3-pip
+```
+When you have pip, pay attention not to install `serial` too or not to already have it. In your Terminal you can check for the pip librairies you have, then maybe uninstall `serial` and eventually maybe install `pyserial` if you don't already have it. Make sure you are not doing those commands as a superuser. 
+```
+pip list
+pip uninstall serial
+pip install pyserial
+```
+Some more librairies are needed if you want to do the plotting of the received data, especially if you want to do the live plot with datetime objects on the x-axis.
+
+#### Programming
+
+The first step is to find which port is used by your computer, like the Raspberry before. Connect your communication device to your computer and see `ls /dev/` in your Terminal. Then do it again without plugging in your communication module. There should be a port appearing on the first try and not on the second, that's this one you will need to use.
 
 ### Android ground station
 
