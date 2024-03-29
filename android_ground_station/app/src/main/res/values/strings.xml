@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">ground_station_final_application</string>
+    <string name="titre">Tablet ground station application !\n</string>
+    <string name="button1_text">LISTEN</string>
+    <string name="button2_text">STOP</string>
+    <string name="button3_text">SEND COMMAND</string>
+</resources>

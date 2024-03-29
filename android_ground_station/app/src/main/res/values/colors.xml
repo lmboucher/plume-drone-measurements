@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="lightOrange">#FFEBEE</color>
+    <color name="M800Green3">#2E7D32</color>
+    <color name="M800Green1">#9E9D24</color>
+    <color name="M800Green2">#558B2F</color>
+    <color name="M800Green4">#00695C</color>
+    <color name="M800Orange1">#F9A825</color>
+    <color name="M800Orange2">#FF8F00</color>
+    <color name="M800Orange3">#EF6C00</color>
+    <color name="M800Orange4">#D84315</color>
+    <color name="M800Blue1">#00838F</color>
+    <color name="M800Blue2">#0277BD</color>
+    <color name="M800Blue3">#1565C0</color>
+    <color name="M800Blue4">#283593</color>
+    <color name="M800Red">#C62828</color>
+    <color name="M800Purple1">#AD1457</color>
+    <color name="M800Purple2">#6A1B9A</color>
+    <color name="M800Purple3">#4527A0</color>
+</resources>
