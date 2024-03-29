@@ -7,16 +7,21 @@ This repository is aimed to contain information for :
 
 ## Raspberry settings
 
-This first point is detailed in this [README file](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/edit/main/remote_station/RemSt_README.md)
+You will find in this [directory](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/edit/main/remote_station/) two Python scripts.
+
+1. One is to communicate with the different modules connected to the Raspberry and send the obtained data to the ground station ;
+2. One is to receive Terminal command lines from the ground station and to executes them. It is mainly reboot and shutdown commands which are useful in this project.
+
+For more details go to this [README file](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/edit/main/remote_station/RemSt_README.md)
 
 ## Computer ground station settings
 
-I used Python 3.11.2 with Spyder (5th version). You will find in this [file](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/blob/main/computer_ground_station/) three scripts :
+I used Python 3.11.2 with Spyder (5th version). You will find in this [directory](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/blob/main/computer_ground_station/) three scripts :
 1. One is to receive and store the data sent by the Raspberry ;
 2. One is to send Terminal command lines to the Rasperry. In case our remote station has a problem while it is several kilometers away, we need to be able to relaunch it without getting it back to us. Drone batteries are heavy, expensive, and does not last that long ; 
 3. One is still to receive and store the data sent by the Raspberry, but is moreover doing a live plot of some of the received data. Variations of some parameters are much easier to see with a plot.
 
-This second point is detailed in this [README file](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/blob/main/computer_ground_station/Computer_GrSt_README.md)
+For more details go to this [README file](https://github.com/lmboucher/Remote-Ground-station-setting-live-drone-measurements/blob/main/computer_ground_station/Computer_GrSt_README.md)
 
 ## Android ground station
 
