@@ -33,17 +33,21 @@ private const val FILENAME = "received_data.txt"
 // We start the interface Listener as we start our activity, takes care to open a Byte buffer with a size adapted to our data (64 bytes)
 class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
 
+    // Initializing all the variables needed in the different functions later
+    // To deal with writing text in the app
     private lateinit var textView: TextView
+    private lateinit var editText: EditText
+    private lateinit var scrollView: ScrollView
+    // To deal with the serial communication
     private lateinit var port: UsbSerialPort
     private lateinit var ioManager: SerialInputOutputManager
-    private lateinit var scrollView: ScrollView
-    private lateinit var editText: EditText
+    // For the live graph
     private lateinit var graph: GraphView
     private var myIncr: Double = 0.0
     private var series = LineGraphSeries<DataPoint>(arrayOf<DataPoint>(DataPoint(0.0, 0.0)))
-
     // Declare a buffer to accumulate incoming data
     private var dataBuffer = StringBuilder()
+    // To activate the buttons correctly when it is needed
     private var isAcquisitionRunning = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,12 +61,14 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
             insets
         }
 
-        // Initialization of the text of the upper layout
+        // Initialization of the text of the upper and lower layouts
         textView = findViewById(R.id.textView)
         scrollView = findViewById(R.id.scrollView)
         editText = findViewById(R.id.sendCommand)
+        // Initialization of the graphic in the middle layout
         graph = findViewById(R.id.graphView)
 
+        // Initialization of the 3 buttons at the bottom of the screen
         val launch: Button = findViewById(R.id.read)
         val stop: Button = findViewById(R.id.write)
         val send: Button = findViewById(R.id.send)
@@ -82,6 +88,7 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
             }
         }
 
+        // The only condition here is to have the port opened. It permits to write a text and to send it to the remote station.
         send.setOnClickListener {
             val inputText = editText.text.toString()
             sendStringToPort(inputText)
@@ -110,7 +117,7 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         isAcquisitionRunning = true
         textView.append("The acquisition is running\n")
 
-        // Create SerialInputOutputManager and start it
+        // Create SerialInputOutputManager and start it, it calls the onNewData function
         ioManager = SerialInputOutputManager(port, this)
         ioManager.start()
         textView.append("The input output manager has started\n")
@@ -191,11 +198,10 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
     }
 
     /**
-
      * We take and modify the function onDestroy from the SerialInputOutputManager interface.
-     * This function is called when there is an IOException throwed (throwed by the functions of the library in case of error)
+     * This function is called when an IOException is thrown (by the functions of the library in case of error)
      *
-     * Stops the process, close the port.
+     * Stops the process, closes the port.
      */
     override fun onDestroy() {
         super.onDestroy()
@@ -208,7 +214,7 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
      * This function is called when there is new data incoming or outgoing.
      *
      * @param data of type ByteArray is the data incoming
-     * @return nothing but calls the writeDataToFile function which writes the decoded data to file
+     * @return nothing but calls the processBuffer function which delimits lines
      */
     override fun onNewData(data: ByteArray) {
 
@@ -224,6 +230,10 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         }
     }
 
+    /**
+     * This function permits to take the data incoming and to recreate the original lines sent by the remote station.
+     * When the data are put back together again in a line, it calls the processLine function
+     */
     private fun processBuffer() {
 
         // Search for newline characters in the StringBuilder
@@ -245,8 +255,17 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         }
     }
 
+    /**
+     * The first aim of this function is to print the line of data in the TextView and to store the line in a
+     * given text file (made by the writeDataToFile function)
+     *
+     * The second aim of this function is to split the line to get the different strings containing information separated.
+     *
+     * The third aim of this function is to plot some parameters of interest live while they are received.
+     */
     private fun processLine(line: String) {
 
+        // print and store the line of data
         textView.append(line + "\n")
         // Scroll the ScrollView to the bottom
         scrollView.post {
@@ -254,10 +273,13 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         }
         writeDataToFile(line)
 
+        // split the lines with the right delimiter
         val columns = line.split(",").map { it.trim() }
 
+        // check the number of data in the line is the correct one otherwise we just do what is above
         if (columns.size == 12) {
 
+            // We extract the parameters of interest
             val timeGPS = columns[0]
             textView.append("Time : " + timeGPS + "\n")
             // Scroll the ScrollView to the bottom
@@ -276,12 +298,16 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
             scrollView.post {
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN)
             }
+            // Plotting part separated in case there is a problem, we don't want the acquisition to stop.
             try {
 
+                // For the x-axis, I don't care really about what it is
                 myIncr = myIncr.inc().inc()
                 val xvalue: Double = myIncr
+                // For the y-axis, my parameter of interest
                 val yvalue: Double = convertToDouble(co2conc)
 
+                // Complete the plot
                 series.appendData(DataPoint(xvalue, yvalue), false, 10)
                 graph.addSeries(series)
                 graph.viewport.isXAxisBoundsManual
@@ -300,6 +326,9 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         }
     }
 
+    /**
+     * A very little function just to ensure our values are of double type for the plotting
+     */
     private fun convertToDouble(value: Any): Double {
         return when (value) {
             is BigDecimal -> {
@@ -363,18 +392,23 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
         }
     }
 
+    /**
+     * Big function but really similar to the previous ones.
+     * The goal is to send the data written in the EditText to the remote station.
+     */
     private fun sendStringToPort(inputText: String) {
 
+        // If we already got data and that the port is already initialized
         if (::port.isInitialized) {
-
             try {
+                // The text written in the EditText is converted into bytes
                 val data: ByteArray = (inputText + '\n').toByteArray()
                 textView.append("send : " + inputText + "\n")
                 // Scroll the ScrollView to the bottom
                 scrollView.post {
                     scrollView.fullScroll(ScrollView.FOCUS_DOWN)
                 }
-                // Convert the string to bytes and send it through the port
+                // We send our data to the port and then it is sent by the modem to the remote station
                 port.write(data, 2000)
             } catch (e: IOException) {
                 // Handle the IOException
@@ -384,7 +418,7 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
                     scrollView.fullScroll(ScrollView.FOCUS_DOWN)
                 }
             }
-
+        // If we just started the app and that we need to open the port first
         } else {
 
             // Set the USB manager
@@ -399,16 +433,15 @@ class MainActivity : AppCompatActivity(), SerialInputOutputManager.Listener {
                 }
                 return
             }
-            // Port is opened now
+            // Port is opened now, we convert the written text into bytes
             val data: ByteArray = (inputText + '\n').toByteArray()
             textView.append("send : " + inputText + "\n")
             // Scroll the ScrollView to the bottom
             scrollView.post {
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN)
             }
-            // Convert the string to bytes and send it through the port
+            // We send our data to the port and then the modem takes care of sending it to the remote station
             port.write(data, 2000)
-
         }
 
         // Clear the line where the text is written
