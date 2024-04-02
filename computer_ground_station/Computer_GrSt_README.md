@@ -3,7 +3,7 @@
 # Common prerequisits to all the programs
 
 First you need Python.
-Then you need to install the `pyserial` library. Install `pip` and then `pyserial`.
+Then you need to install the `pyserial` library : install `pip` and then `pyserial`.
 ```
 sudo apt install python3-pip
 pip install pyserial
