@@ -42,9 +42,9 @@ Now everything is ready to communicate with the GPS module !
 
 Set the baudrate of the serial port associated to the GPS correctly : `stty -F /dev/ttyAMA0 9600`
 
-Connect your GPS module to your Raspberry :
+Connect your GPS module to your Raspberry like shown on this image :
 
-SCHEMAAAAAAAAA
+![Image of the GPS module connexion to the Rasperry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/Raspberry_schematics.png)
 
 The first time, in order to see data incoming in the Terminal you can do those steps :
 
