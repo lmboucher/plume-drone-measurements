@@ -50,7 +50,7 @@ The first time, in order to see data incoming in the Terminal you can do those s
 
 1. First kill all launched processes : `sudo killall gpsd`
 
-2. Add the device to the gpsd tool : go to the file `sudo nano /etc/default/gpsd` and add your GPS serial port : `DEVICES = "/dev/ttyAMA0"
+2. Add the device to the gpsd tool : go to the file `sudo nano /etc/default/gpsd` and add your GPS serial port : `DEVICES = "/dev/ttyAMA0"`
 
 3. Configure the socket in which the stream goes :
 ```
@@ -64,7 +64,7 @@ I advise you after this first try to write a little program (mine is in Python) 
 
 ## Create a program to communicate with the GPS module
 
-PUT MY PROGRAM HERE
+[Here](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/GPS_communication_only.py) is a little example of a Python script to communicate with your GPS module.
 
 # Raspberry setting for the data transmission to another device
 
