@@ -29,7 +29,7 @@ comm_port_name = '/dev/ttyUSB0'
 #Port opening, make sure the baudrate is correct
 comm_ser_gs = serial.Serial(comm_port_name, 57600)
 #Enter here the path associated to the file where you want your received data to be written
-my_result_file_path = '/home/lucie/ENS2/STAGE_NICOLOSI/tache_2/received_data.txt'
+my_result_file_path = '/home/lucie/ENS2/stage_nicolosi/tache_2/received_data.txt'
 #Indicate here names for your AFE measurements, in the increasing AFE number
 #WARNING : put all of them even if you don't want to plot all of them.
 my_AFE = ['SO2 (ppm)', 'H2S (ppm)', 'CO2 (ppm)']
@@ -66,8 +66,8 @@ n_points_plotted = 20
 my_refresh_time = 2000
 #To have a nice x-axis on the plot, set here the date of your measurements
 my_year = 2024
-my_month = 3
-my_day = 5
+my_month = 4
+my_day = 8
 
 '''
 Functions
@@ -97,8 +97,11 @@ def acquire_sent_data_plots():
                     print(line)
                     file.write(line + '\n') #Storing all the lines in the results file of the ground station
                     file.flush()
-                    data_to_send.append(line.split(" ,")) #Adding the line to the data to yield
-                    count += 1
+                    split_line = line.split(" ,")
+                    #To start the plotting we need to have a GPS time signal, so until we have this signal we just store the data
+                    if split_line[0] != "None" :
+                        data_to_send.append(split_line) #Adding the line to the data to yield
+                        count += 1
             
             #Now the number of measures wanted has been received, data_to_send is converted to an array and yielded (returned but with continuing the script)
             data_to_send = np.array(data_to_send)
@@ -114,12 +117,15 @@ def acquire_sent_data_plots():
                     print(line)
                     file.write(line + '\n')
                     file.flush()
-                    new_data_point = np.array([line.split(" ,")])
-
-                    if len(new_data_point[0]) == n_col :
-                        data_to_send = np.concatenate((data_to_send[1:], new_data_point), axis=0) #In the yielded data we add the last line received and remove the first one
-                    
-                    yield data_to_send
+                    split_line = line.split(" ,")
+                    #It is the same here, we don't send the data to the plotting function if there is no time signal
+                    if split_line[0] != "None" :
+                        new_data_point = np.array([split_line])
+    
+                        if len(new_data_point[0]) == n_col :
+                            data_to_send = np.concatenate((data_to_send[1:], new_data_point), axis=0) #In the yielded data we add the last line received and remove the first one
+                        
+                        yield data_to_send
 
 def plot_data(data):
     '''
@@ -206,7 +212,6 @@ if __name__ == "__main__":
     while True : #make an infinite loop
             
         try :
-            
             plot_data(data)
             
         except Exception :
