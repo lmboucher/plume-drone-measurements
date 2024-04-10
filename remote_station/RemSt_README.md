@@ -70,7 +70,7 @@ I advise you after this first try to write a little program (mine is in Python) 
 
 ## Create a program to communicate with the PMS5303 Plantower module
 
-[Here](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_datalogger_only.py) is a little example of a Python script to communicate with your PMS5303 Plantower module.
+[Here](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_datalogger_only.py) is a little example of a Python script to communicate with your PMS5303 Plantower module. More information is written below.
 
 # Raspberry setting for the data transmission to another device
 
@@ -84,7 +84,7 @@ When you have the communication port name, you are ready to read and write infor
 
 Here, the code is inspired of the code given by the multisensor library.
 
-# [PMS5303, Neo6mGPS, tecnosense multisensor board connected to the Raspberry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_multigas_comm_datalogger.py)
+# [PMS5303, RFD 868x-EU module, and tecnosense multisensor board connected to the Raspberry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_multigas_comm_datalogger.py)
 
 In that program, as said in the title, three modules are connected to the Raspberry. The program is divided in 4 parts as usual. However, the third part, dedicated to the functions, is itself divided in 4 parts.
 
@@ -116,3 +116,9 @@ The documentation indicates that the number of information per second can vary d
 3) In the multigas part, it is also just a function for the port opening. It is inspired by the original code given by the multisensor library.
 
 4) The "whole" part is the biggest one. It contains four functions. The first function permits to print a given string in the terminal and to store the given string in a given document. The second function permits to create the header of your file. The third function permits to collect one data line with the data of the three modules. The fourth function permits to call the previous ones to record continuously.
+
+# [RFD 868x-EU module, Neo6mGPS, and tecnosense multisensor board connected to the Raspberry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/GPS_multigas_comm_datalogger.py)
+
+This program is very much similar to the previous one. 
+
+The main difference is the way GPS information are read. The Neo6m GPS module exchanges NMEA message with the Raspberry. The pynmea library is used to read them after decoding. Also, here the time column corresponds to what is given by the GPS. It is not an inner time from a Python library as with the PMS module.
