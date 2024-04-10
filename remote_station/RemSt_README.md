@@ -1,8 +1,8 @@
 To set up your Raspberry, you  may use a HDMI-HDMI or HDMI-VGA cable which you plug in on one side to the Raspberry and on the other side to a monitor. Then, you plug in a keyboard via the USB port to be able to write command lines and programs. The mouse is optional since you can go into Terminal mode without it. You also need an alimentation ; you can buy the one from Raspberry or use an external battery or use a computer or a phone charger or ... 
 
-# Communication with the Neo 6m GPS module
+# Communication with the Neo 6m GPS module or with the PMS5303 sensor of Plantower
 
-The goal of this part is to be able to receive, print, and save the data acquired by the GPS module in the Raspberry.
+The goal of this part is to be able to receive, print, and save the data acquired by each of the modules in the Raspberry. Both of them can't be connected at the same time in my setup.
 
 ## Installations
 
@@ -38,13 +38,13 @@ init_uart_baud=9600
 
 ## Communicate !
 
-Now everything is ready to communicate with the GPS module ! 
+Now everything is ready to communicate with the modules ! 
 
 Set the baudrate of the serial port associated to the GPS correctly : `stty -F /dev/ttyAMA0 9600`
 
-Connect your GPS module to your Raspberry like shown on this image :
+Connect one of your module to your Raspberry like shown on this image :
 
-![Image of the GPS module connexion to the Rasperry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/Raspberry_schematics.png)
+![Image of the UART connexion to the Rasperry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/Raspberry_schematics.png)
 
 The first time, in order to see data incoming in the Terminal you can do those steps :
 
@@ -58,7 +58,7 @@ sudo systemctl enable gpsd.socket
 sudo systemctl start gpsd.socket
 cgps -s
 ```
-4. Put your Raspberry + GPS module under a clear sky (not in a yard) and wait at least 20 minutes to get a signal.
+4. For the GPS module, you need to put your Raspberry connected to it under a clear sky (not in a yard). You also need to wait at least 20 minutes to get a signal at first. For the PMS Plantower module it works in all environments.
 
 I advise you after this first try to write a little program (mine is in Python) to read incoming data easily without having to do again all the steps from that part.
 
@@ -66,8 +66,18 @@ I advise you after this first try to write a little program (mine is in Python) 
 
 [Here](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/GPS_communication_only.py) is a little example of a Python script to communicate with your GPS module.
 
+## Create a program to communicate with the PMS5303 Plantower module
+
+[Here](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_datalogger_only.py) is a little example of a Python script to communicate with your PMS5303 Plantower module.
+
 # Raspberry setting for the data transmission to another device
 
 The communication module used here is a RFD 868x-EU device. Thanks to a USB-FTDI cable, it is plugged in the Raspberry via USB port.
 
-The first and most important step is to determine in which serial port the information pass : look at your ports without plugging in the communication module by using `ls /dev/` in your Terminal. Then plug in the communication module and look at `ls /dev/` again. On Linux you can even safely add `| grep tty` at the end of the command. This time a port should have appeared. In my case it is sometimes `ttyACM0` and sometimes `ttyACM1` (but I have also the GPS module and the multisensor board connected).
+The first and most important step is to determine in which serial port the information pass : look at your ports without plugging in the communication module by using `ls /dev/` in your Terminal. Then plug in the communication module and look at `ls /dev/` again. On Linux you can even safely add `| grep tty` at the end of the command. This time a port should have appeared. In my case it is sometimes `ttyACM0` and sometimes `ttyACM1` (but I have also the GPS module and the multisensor board connected). 
+
+When you have the communication port name, you are ready to read and write information in the port. Use the serial library to open the port and write the information you wish in it. You would use in the beginning `my_port = serial.Serial(my_port_name_with_path, my_baudrate, my_timeout)`. The information transiting from one communication modem to another one must be encoded. So use `my_port.write(my_string.encode())`. By default `utf-8` encoding is used. When this is done it is over. The ground station has to take the flame.
+
+# Raspberry setting for the log of the multisensor board data
+
+Here, the code is inspired of the code given by the multisensor library.
