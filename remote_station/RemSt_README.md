@@ -8,13 +8,15 @@ The goal of this part is to be able to receive, print, and save the data acquire
 
 1. Install Python on your Raspberry, the version must be at least 3.5. This tutorial is nice : [Python 3.9 installation on a Raspberry Pi](https://itheo.tech/install-python-39-on-raspberry-pi).
 
-2. Install pip with `sudo apt install python3-pip`
+2. Install Crontab to be able to launch your programs when you boot the station. It is important since the station is remote. You don't want to bring it back to shut on your programs.
 
-3. Make sure you do not have any conflicts between your librairies. Conflicts arrive notably when you install pip packages being a superuser, so pay attention to be superuser only for apt installations.
+3. Install pip with `sudo apt install python3-pip`
 
-4.  Install pyserial (NOT serial otherwise you will have issues) `pip install pyserial`
+4. Make sure you do not have any conflicts between your librairies. Conflicts arrive notably when you install pip packages being a superuser, so pay attention to be superuser only for apt installations.
 
-5.  Install librairies to handle communication with the GPS module `sudo apt install gpsd gpsd-clients python3-gps minicom`
+5.  Install pyserial (NOT serial otherwise you will have issues) `pip install pyserial`
+
+6.  Install librairies to handle communication with the GPS module `sudo apt install gpsd gpsd-clients python3-gps minicom`
 
 ## Configuration files modifications
 
@@ -81,3 +83,36 @@ When you have the communication port name, you are ready to read and write infor
 # Raspberry setting for the log of the multisensor board data
 
 Here, the code is inspired of the code given by the multisensor library.
+
+# [PMS5303, Neo6mGPS, tecnosense multisensor board connected to the Raspberry](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/PMS_multigas_comm_datalogger.py)
+
+In that program, as said in the title, three modules are connected to the Raspberry. The program is divided in 4 parts as usual. However, the third part, dedicated to the functions, is itself divided in 4 parts.
+
+If you have the same installation than here, the program should work just by modifying the parameters in the beginning (first part and also the most important one). Then, again again, for the imports, check you have only the `pyserial` library installed and not the `serial` one. 
+
+### The functions
+
+1) In the Plantower module part, only one function is written. It permits to read the information sent by the device. Depending on the timeout you set, you will have more or less lines of `b''`. With a timeout of 0.2 seconds I typically series like :
+```
+b''
+b''
+b''
+b''
+b'BM\x00\x1c\x00\x17\x00\x18\x00\x1b\x00\x14\x00\x18\x00\x1b\x11\xd0\x06o\x00/\x00\x00\x00\x00\x00\x00\x11\x00\x02\xd2'
+```
+To decode that, the decode function of Python is not very efficient. The instrument documentation gives information about what the bytes correspond to. The two first characters : `B` and `M`, are fixed. Then, you have a succession of bytes you can interprete.
+
+Bytes 3 and 4 : `\x00\x1c` give the frame length
+Bytes 5 and 6 : `\x00\x17` give the value of the first data
+...
+Bytes 27 and 28 : `\x00\x00` give the value of the twelfth data
+Bytes 29 and 30 : `\x11\x00` give the value of the "reserved" data
+Bytes 31 and 32 : `\x02\xd2` give the check code
+
+The documentation indicates that the number of information per second can vary depending of the measures made by the instrument. Due to that I set the timeout at the minimum to be sure to get all the sent information.
+
+2) In the communication module part, the function is just to open correctly the port. As written before, the port name changes depending on the situation so it is better to dedicate a whole function to the opening.
+
+3) In the multigas part, it is also just a function for the port opening. It is inspired by the original code given by the multisensor library.
+
+4) The "whole" part is the biggest one. It contains four functions. The first function permits to print a given string in the terminal and to store the given string in a given document. The second function permits to create the header of your file. The third function permits to collect one data line with the data of the three modules. The fourth function permits to call the previous ones to record continuously.
