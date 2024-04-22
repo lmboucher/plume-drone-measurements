@@ -1,7 +1,5 @@
 The developped application is doing the equivalent of my second and third programs on the computer ground station.
 
-SCHÉMAAAAAAAAA
-
 I use Android Studio on my computer (Linux Debian amd64). I dowloaded the version 2O23.2.1.24 for Linux 64 bits.
 
 The first step is to install Android Studio. At first launch, I chose "do not import settings" and "standard setup", I was new to this app. Try to follow the "Hello World" course from the [Essentials](https://developer.android.com/codelabs/basic-android-kotlin-compose-first-app?hl=fr) . If when you launch a build you have `Error running "GreetingPreview" : /dev/kvm is not found` go to your BIOS (restart your computer and press without stopping the F2 key) and enable `Intel Virtualization Technology` (found in the `Configuration` menu on my computer).
