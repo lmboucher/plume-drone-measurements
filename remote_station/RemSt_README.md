@@ -2,7 +2,9 @@ To set up your Raspberry, you  may use a HDMI-HDMI or HDMI-VGA cable which you p
 
 # Raspberry setting for one module at a time
 
-The goal of this part is to be able to receive, print, and save the data acquired by each of the modules in the Raspberry. Both of them can't be connected at the same time in my setup.
+The goal of this part is to be able to receive, print, and save the data acquired by each of the modules connected to the Raspberry. Since we can not connect 2 modules by UART at the same time, in the end, two setups are configured :
+1) The multisensor board (USB) + the communication module (USB) + the GPS module (UART)
+2) The multisensor board (USB) + the communication module (USB) + the particulate matter module (UART) 
 
 ## Modules connected by UART
 
@@ -10,7 +12,7 @@ The goal of this part is to be able to receive, print, and save the data acquire
 
 1. Install Python on your Raspberry, the version must be at least 3.5. This tutorial is nice : [Python 3.9 installation on a Raspberry Pi](https://itheo.tech/install-python-39-on-raspberry-pi).
 
-2. Install Crontab to be able to launch your programs when you boot the station. It is important since the station is remote. You don't want to bring it back to shut on your programs.
+2. Install Crontab to be able to launch your programs when you boot the station. It is important since the station is remote. You don't want to bring the station back to shut on your programs if they failed.
 
 3. Install pip with `sudo apt install python3-pip`
 
@@ -121,7 +123,7 @@ If you have the same installation than here, the program should work just by mod
 
 1) In the Plantower module part, only one function is written. It permits to read the information sent by the device based on what explained before.
 
-2) In the communication module part, the function is just to open correctly the port. As written before, the port name changes depending on the situation so it is better to dedicate a whole function to the opening.
+2) In the communication module part, the function is just to open correctly the port. As written before, the port name changes depending on the situation so it is better to dedicate a whole function to the opening. Also, I added the possibility of returning `None` in case the communication module is not plugged in.
 
 3) In the multigas part, it is also just a function for the port opening. It is inspired by the original code given by the multisensor library.
 
@@ -129,6 +131,12 @@ If you have the same installation than here, the program should work just by mod
 
 # [Raspberry setting for three modules at a time (RFD 868x-EU module, Neo6mGPS, and tecnosense multisensor board)](https://github.com/lmboucher/plume-drone-measurements/blob/main/remote_station/GPS_multigas_comm_datalogger.py)
 
-This program is very much similar to the previous one. 
+This program is similar to the previous one. Changes have been made to get in the end correctly one information per second and not one information every two seconds.
 
-The main difference is the way GPS information are read. The Neo6m GPS module exchanges NMEA message with the Raspberry. The pynmea library is used to read them after decoding. Also, here the time column corresponds to what is given by the GPS. It is not an inner time from a Python library as with the PMS module.
+1) The first part is not dedicated to the Plantower module but to the GPS module. It contains three functions. The first one returns the latitude, longitude, and altitude sent by the GPS. The second function returns only the time given by the GPS. The third function yields in an array on one side the GPS time and on the other side the GPS latitude, longitude, and altitude. We don't decode information in the same way than with the Plantower module, we use the Pynmea2 library.
+
+2) The second  part is still the same than previously.
+
+3) The third part is a little bit modified ; there is still a function opening the port but also a function yielding one line of measurements taken by the sensors on the multisensor board.
+
+4) This "whole" part is the same than before, however, now, in the function to get the modules data, print them, and log them, we just get what is yielded by the functions in parts 1) and 3). This permits to run the two acquisitions in parallel and not lose one second when running a process.
